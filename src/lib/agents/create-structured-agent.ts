@@ -1,11 +1,14 @@
-import { HumanMessage } from "@langchain/core/messages";
-import { createAgent } from "langchain";
+import { HumanMessage, SystemMessage } from "@langchain/core/messages";
+import type { Runnable } from "@langchain/core/runnables";
 import type { InteropZodType } from "@langchain/core/utils/types";
 import { createChatModel } from "@/lib/llm";
 
-type StructuredAgent = ReturnType<typeof createAgent>;
+interface AgentEntry {
+  systemPrompt: string;
+  runnable: Runnable;
+}
 
-const agentCache = new Map<string, StructuredAgent>();
+const agentRegistry = new Map<string, AgentEntry>();
 
 interface CreateStructuredAgentOptions<T extends Record<string, unknown>> {
   name: string;
@@ -13,39 +16,33 @@ interface CreateStructuredAgentOptions<T extends Record<string, unknown>> {
   responseFormat: InteropZodType<T>;
 }
 
+/** Single-call structured agent (fits Vercel Hobby 60s limit). */
 export function createStructuredAgent<T extends Record<string, unknown>>({
   name,
   systemPrompt,
   responseFormat,
 }: CreateStructuredAgentOptions<T>) {
-  const cached = agentCache.get(name);
-  if (cached) {
-    return cached;
+  const existing = agentRegistry.get(name);
+  if (existing) {
+    return existing.runnable;
   }
 
-  const agent = createAgent({
-    model: createChatModel(),
-    tools: [],
-    name,
-    systemPrompt,
-    responseFormat,
-  });
-
-  agentCache.set(name, agent);
-  return agent;
+  const runnable = createChatModel().withStructuredOutput(responseFormat, { name });
+  agentRegistry.set(name, { systemPrompt, runnable });
+  return runnable;
 }
 
 export async function invokeStructuredAgent<T extends Record<string, unknown>>(
-  agent: StructuredAgent,
+  agentName: string,
   userContent: string,
 ): Promise<T> {
-  const result = await agent.invoke({
-    messages: [new HumanMessage(userContent)],
-  });
-
-  if (!result.structuredResponse) {
-    throw new Error("Agent did not return structured output");
+  const entry = agentRegistry.get(agentName);
+  if (!entry) {
+    throw new Error(`Agent "${agentName}" is not registered`);
   }
 
-  return result.structuredResponse as T;
+  return entry.runnable.invoke([
+    new SystemMessage(entry.systemPrompt),
+    new HumanMessage(userContent),
+  ]) as Promise<T>;
 }

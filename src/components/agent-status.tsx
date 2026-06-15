@@ -10,34 +10,16 @@ export const AGENT_STEPS: {
   message: string;
 }[] = [
   {
-    id: "sanitize",
-    headline: "Finding your focus",
+    id: "prepare",
+    headline: "Building your practice plan",
     message:
-      "We're shaping your topics into a sharp practice plan — so every minute you spend prepares you for the questions that matter.",
-  },
-  {
-    id: "generate",
-    headline: "Crafting real interview questions",
-    message:
-      "No fluff, no filler — just the kind of questions hiring managers actually ask, tailored to what you want to master.",
+      "We're shaping your topics into focused subtopics and crafting interview questions tailored to what you want to master.",
   },
   {
     id: "options",
     headline: "Making every choice count",
     message:
       "Smart distractors help you learn faster. We're building options that feel real, so you practice thinking — not guessing.",
-  },
-  {
-    id: "difficulty",
-    headline: "Calibrating the challenge",
-    message:
-      "The sweet spot is tough enough to stretch you, fair enough to build confidence. We're tuning your quiz to hit it.",
-  },
-  {
-    id: "uniqueness",
-    headline: "Polishing the final set",
-    message:
-      "Almost there! We're making sure every question brings something new to the table — no repeats, no wasted effort.",
   },
 ];
 

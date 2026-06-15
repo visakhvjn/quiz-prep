@@ -23,12 +23,7 @@ export interface Quiz {
   createdAt: string;
 }
 
-export type AgentName =
-  | "sanitize"
-  | "generate"
-  | "options"
-  | "difficulty"
-  | "uniqueness";
+export type AgentName = "prepare" | "options";
 
 export interface GenerateQuizRequest {
   topics: string;

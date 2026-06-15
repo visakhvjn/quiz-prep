@@ -10,8 +10,6 @@ export const QuizGraphState = Annotation.Root({
   questionCount: Annotation<number>,
   feedback: Annotation<string[]>,
   retryCount: Annotation<number>,
-  difficultyPassed: Annotation<boolean>,
-  uniquenessPassed: Annotation<boolean>,
 });
 
 export type QuizGraphStateType = typeof QuizGraphState.State;

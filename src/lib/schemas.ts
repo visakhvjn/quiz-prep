@@ -2,21 +2,18 @@ import { z } from "zod";
 
 export const difficultySchema = z.enum(["easy", "medium", "hard"]);
 
-export const sanitizeTopicsOutputSchema = z.object({
-  subtopics: z
-    .array(z.string().min(2))
-    .min(3)
-    .max(10)
-    .describe("Interview-relevant subtopics derived from user input"),
-});
-
 export const draftQuestionSchema = z.object({
   subtopic: z.string(),
   question: z.string().min(10),
   correctAnswer: z.string().min(1),
 });
 
-export const generateQuestionsOutputSchema = z.object({
+export const planAndGenerateOutputSchema = z.object({
+  subtopics: z
+    .array(z.string().min(2))
+    .min(3)
+    .max(10)
+    .describe("Interview-relevant subtopics derived from user input"),
   questions: z.array(draftQuestionSchema).min(1),
 });
 
@@ -37,19 +34,14 @@ export const addOptionsOutputSchema = z.object({
   questions: z.array(questionWithOptionsSchema).min(1),
 });
 
-export const difficultyAssessmentSchema = z.object({
-  assessments: z.array(
+export const qualityAssessmentSchema = z.object({
+  difficultyAssessments: z.array(
     z.object({
       questionIndex: z.number().int().min(0),
       rating: z.enum(["too_easy", "appropriate", "too_hard"]),
       note: z.string().describe("Optional note, or empty string if none"),
     }),
   ),
-  passed: z.boolean(),
-  feedback: z.array(z.string()),
-});
-
-export const uniquenessAssessmentSchema = z.object({
   duplicateGroups: z.array(
     z.object({
       indices: z.array(z.number().int().min(0)),
@@ -59,3 +51,15 @@ export const uniquenessAssessmentSchema = z.object({
   passed: z.boolean(),
   feedback: z.array(z.string()),
 });
+
+// Kept for backwards compatibility if referenced elsewhere
+export const sanitizeTopicsOutputSchema = z.object({
+  subtopics: planAndGenerateOutputSchema.shape.subtopics,
+});
+
+export const generateQuestionsOutputSchema = z.object({
+  questions: z.array(draftQuestionSchema).min(1),
+});
+
+export const difficultyAssessmentSchema = qualityAssessmentSchema;
+export const uniquenessAssessmentSchema = qualityAssessmentSchema;

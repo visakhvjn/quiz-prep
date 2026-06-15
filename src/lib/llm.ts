@@ -10,5 +10,7 @@ export function createChatModel() {
     apiKey,
     model: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
     temperature: 0.4,
+    timeout: 25_000,
+    maxTokens: 4096,
   });
 }

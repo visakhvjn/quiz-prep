@@ -16,7 +16,7 @@ import { saveQuiz } from "@/lib/quiz-store";
 import { cn } from "@/lib/utils";
 import type { AgentName, Difficulty, QuizStreamEvent } from "@/types/quiz";
 
-const QUESTION_COUNTS = Array.from({ length: 8 }, (_, index) => index + 3);
+const QUESTION_COUNTS = Array.from({ length: 6 }, (_, index) => index + 3);
 
 export function TopicForm() {
   const router = useRouter();

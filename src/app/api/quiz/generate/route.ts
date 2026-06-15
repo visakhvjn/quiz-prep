@@ -24,7 +24,7 @@ export async function POST(request: Request) {
   }
 
   const difficulty: Difficulty = body.difficulty ?? "medium";
-  const questionCount = Math.min(Math.max(body.questionCount ?? 5, 3), 10);
+  const questionCount = Math.min(Math.max(body.questionCount ?? 5, 3), 8);
 
   const stream = new ReadableStream({
     async start(controller) {
@@ -33,6 +33,8 @@ export async function POST(request: Request) {
       const send = (event: QuizStreamEvent) => {
         controller.enqueue(encoder.encode(encodeSse(event)));
       };
+
+      let heartbeat: ReturnType<typeof setInterval> | undefined;
 
       try {
         const initialState = {
@@ -44,12 +46,14 @@ export async function POST(request: Request) {
           questionCount,
           feedback: [] as string[],
           retryCount: 0,
-          difficultyPassed: false,
-          uniquenessPassed: false,
         };
 
         let finalState = initialState;
         const seenAgents = new Set<string>();
+
+        heartbeat = setInterval(() => {
+          controller.enqueue(encoder.encode(": heartbeat\n\n"));
+        }, 10_000);
 
         for await (const update of await quizGraph.stream(initialState, {
           streamMode: "updates",
@@ -76,7 +80,6 @@ export async function POST(request: Request) {
 
         if (finalState.questions.length === 0) {
           send({ type: "error", message: "Failed to generate quiz questions." });
-          controller.close();
           return;
         }
 
@@ -94,6 +97,7 @@ export async function POST(request: Request) {
           error instanceof Error ? error.message : "Quiz generation failed";
         send({ type: "error", message });
       } finally {
+        if (heartbeat) clearInterval(heartbeat);
         controller.close();
       }
     },
@@ -114,21 +118,16 @@ function summarizeAgentData(
     subtopics: string[];
     draftQuestions: unknown[];
     questions: unknown[];
-    difficultyPassed: boolean;
-    uniquenessPassed: boolean;
   },
 ) {
   switch (agent) {
-    case "sanitize":
-      return { subtopics: state.subtopics };
-    case "generate":
-      return { count: state.draftQuestions.length };
+    case "prepare":
+      return {
+        subtopics: state.subtopics,
+        count: state.draftQuestions.length,
+      };
     case "options":
       return { count: state.questions.length };
-    case "difficulty":
-      return { passed: state.difficultyPassed };
-    case "uniqueness":
-      return { passed: state.uniquenessPassed };
     default:
       return {};
   }
