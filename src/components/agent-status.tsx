@@ -39,7 +39,7 @@ export function AgentStatus({ activeAgent, completedAgents }: AgentStatusProps) 
   );
 
   return (
-    <div className="flex h-full flex-col justify-center gap-10 px-8 py-12 text-white">
+    <div className="flex h-full flex-col justify-center gap-6 px-6 py-8 text-white lg:gap-10 lg:px-8 lg:py-12">
       <div className="space-y-3">
         <div className="flex items-center justify-between text-sm text-white/70">
           <span>Your quiz is on the way</span>
@@ -62,7 +62,7 @@ export function AgentStatus({ activeAgent, completedAgents }: AgentStatusProps) 
         <p className="text-sm font-medium tracking-wide text-white/60 uppercase">
           {activeAgent ? "Hang tight" : "Just finished"}
         </p>
-        <h3 className="text-3xl font-bold tracking-tight sm:text-4xl">
+        <h3 className="text-2xl font-bold tracking-tight sm:text-4xl">
           {step.headline}
         </h3>
         <p className="max-w-md text-lg leading-relaxed text-white/80">

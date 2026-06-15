@@ -106,8 +106,8 @@ export default function QuizPlayPage() {
     }
 
     return (
-      <main className="flex h-full min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto px-4 py-10">
-        <div className="w-full max-w-lg space-y-6 rounded-3xl border border-primary/10 bg-white p-8 shadow-xl shadow-primary/10">
+      <main className="flex h-full min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto px-0 py-6 sm:px-4 sm:py-10">
+        <div className="w-full space-y-6 rounded-none border-y border-primary/10 bg-white p-6 shadow-xl shadow-primary/10 sm:max-w-lg sm:rounded-3xl sm:border sm:p-8">
           <div className="space-y-2 text-center">
             <p className="text-xs font-medium tracking-wide text-primary uppercase">
               Ready to practice
@@ -167,7 +167,11 @@ export default function QuizPlayPage() {
             )}
           </div>
 
-          <Button className="w-full" size="lg" onClick={handleStart}>
+          <Button
+            className="h-12 w-full text-base shadow-lg shadow-primary/20"
+            size="lg"
+            onClick={handleStart}
+          >
             Start quiz
           </Button>
         </div>

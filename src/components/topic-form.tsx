@@ -334,7 +334,14 @@ export function TopicForm() {
         </div>
       </section>
 
-      <section className="panel-purple relative flex h-full min-h-[320px] flex-col border-t border-white/10 lg:min-h-0 lg:border-t-0 lg:border-l">
+      <section
+        className={cn(
+          "panel-purple relative flex flex-col border-t border-white/10",
+          isGenerating
+            ? "h-auto lg:h-full lg:min-h-0 lg:border-t-0 lg:border-l"
+            : "hidden lg:h-full lg:min-h-0 lg:flex lg:border-l",
+        )}
+      >
         {isGenerating ? (
           <AgentStatus
             activeAgent={activeAgent}

@@ -84,7 +84,7 @@ export function QuizQuestionsEditor({ quiz, onSaved }: QuizQuestionsEditorProps)
             key={question.id}
             className="rounded-xl border border-primary/10 bg-white p-5 shadow-sm"
           >
-            <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
               <p className="text-sm font-medium text-primary">
                 Question {index + 1}
               </p>
@@ -93,7 +93,7 @@ export function QuizQuestionsEditor({ quiz, onSaved }: QuizQuestionsEditorProps)
                 onChange={(event) =>
                   updateQuestion(index, { subtopic: event.target.value })
                 }
-                className="max-w-xs"
+                className="w-full sm:max-w-xs"
                 placeholder="Subtopic"
               />
             </div>
@@ -166,8 +166,13 @@ export function QuizQuestionsEditor({ quiz, onSaved }: QuizQuestionsEditorProps)
         ))}
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <Button onClick={handleSave} disabled={isSaving}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+        <Button
+          onClick={handleSave}
+          disabled={isSaving}
+          size="lg"
+          className="h-12 w-full text-base sm:w-auto"
+        >
           {isSaving ? "Saving…" : "Save changes"}
         </Button>
         {message && (

@@ -71,12 +71,12 @@ export function MarketingHome() {
             teachers create assessments in minutes — not hours.
           </p>
 
-          <div className="relative z-10 mt-10 flex flex-wrap items-center justify-center gap-3">
+          <div className="relative z-10 mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <Link
               href="/create"
               className={cn(
                 buttonVariants({ size: "lg" }),
-                "h-12 gap-2 border-0 bg-white px-6 text-base font-semibold text-primary shadow-lg shadow-black/20 hover:bg-white/95 hover:text-primary",
+                "h-12 w-full gap-2 border-0 bg-white px-6 text-base font-semibold text-primary shadow-lg shadow-black/20 hover:bg-white/95 hover:text-primary sm:w-auto",
               )}
             >
               Start building
@@ -85,7 +85,7 @@ export function MarketingHome() {
               href="#public-quizzes"
               className={cn(
                 buttonVariants({ size: "lg" }),
-                "h-12 border border-white/40 bg-white/10 px-6 text-base text-white backdrop-blur-sm hover:bg-white/20 hover:text-white",
+                "h-12 w-full border border-white/40 bg-white/10 px-6 text-base text-white backdrop-blur-sm hover:bg-white/20 hover:text-white sm:w-auto",
               )}
             >
               Explore public quizzes
