@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MessageSquarePlus, PanelLeftClose, PanelLeft } from "lucide-react";
+import { MessageSquarePlus, PanelLeft } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -11,16 +11,49 @@ import {
   useQuizzesList,
 } from "@/lib/use-quizzes-list";
 
+export function AppBrand({
+  onNavigate,
+  variant = "default",
+}: {
+  onNavigate?: () => void;
+  variant?: "default" | "light";
+}) {
+  return (
+    <Link
+      href="/"
+      onClick={onNavigate}
+      className="flex min-w-0 items-center gap-2.5"
+    >
+      <span
+        className={cn(
+          "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold shadow-sm",
+          variant === "light"
+            ? "bg-white text-primary shadow-black/10"
+            : "bg-primary text-primary-foreground shadow-primary/30",
+        )}
+      >
+        Q
+      </span>
+      <span
+        className={cn(
+          "truncate text-lg font-semibold tracking-tight",
+          variant === "light" && "text-white",
+        )}
+      >
+        QuizPrep
+      </span>
+    </Link>
+  );
+}
+
 interface AppSidebarProps {
   collapsed: boolean;
-  onToggle: () => void;
   onNavigate?: () => void;
   onNewQuiz?: () => void;
 }
 
 export function AppSidebar({
   collapsed,
-  onToggle,
   onNavigate,
   onNewQuiz,
 }: AppSidebarProps) {
@@ -34,34 +67,9 @@ export function AppSidebar({
           collapsed ? "w-0 overflow-hidden border-r-0 opacity-0" : "w-72 opacity-100",
         )}
     >
-      <div className="flex h-14 items-center justify-between border-b border-primary/10 px-3">
+      <div className="p-3 pt-4">
         <Link
-          href="/"
-          onClick={onNavigate}
-          className="flex min-w-0 items-center gap-2.5 px-1"
-        >
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground shadow-sm shadow-primary/30">
-            Q
-          </span>
-          <span className="truncate text-lg font-semibold tracking-tight">
-            QuizPrep
-          </span>
-        </Link>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          className="hidden lg:inline-flex"
-          onClick={onToggle}
-          aria-label="Collapse sidebar"
-        >
-          <PanelLeftClose className="size-4" />
-        </Button>
-      </div>
-
-      <div className="p-3">
-        <Link
-          href="/"
+          href="/create"
           onClick={onNewQuiz}
           className={buttonVariants({
             variant: "outline",

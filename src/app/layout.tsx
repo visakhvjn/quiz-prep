@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     template: "%s · QuizPrep",
   },
   description:
-    "Generate AI-powered interview practice quizzes tailored to your topics.",
+    "Create AI-powered practice quizzes for interview prep, classrooms, and study groups. Browse public quizzes or build your own in minutes.",
   applicationName: "QuizPrep",
 };
 

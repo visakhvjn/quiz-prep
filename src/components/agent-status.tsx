@@ -1,7 +1,6 @@
 "use client";
 
 import { Progress } from "@/components/ui/progress";
-import { PublicQuizzes } from "@/components/public-quizzes";
 import { cn } from "@/lib/utils";
 import type { AgentName } from "@/types/quiz";
 
@@ -97,38 +96,34 @@ const MARKETING_HIGHLIGHTS = [
 
 export function MarketingPanel() {
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-y-auto">
-      <div className="flex flex-col justify-center gap-10 px-8 py-12">
-        <div className="space-y-4">
-          <p className="text-sm font-medium tracking-wide text-white/60 uppercase">
-            Why QuizPrep
-          </p>
-          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Walk in confident.
-            <br />
-            Walk out proud.
-          </h2>
-          <p className="max-w-md text-lg leading-relaxed text-white/75">
-            Interviews reward clarity under pressure.
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          {MARKETING_HIGHLIGHTS.map((item) => (
-            <div
-              key={item.title}
-              className="rounded-2xl border border-white/15 bg-white/10 px-5 py-4"
-            >
-              <p className="font-semibold text-white">{item.title}</p>
-              <p className="mt-1 text-sm leading-relaxed text-white/70">
-                {item.body}
-              </p>
-            </div>
-          ))}
-        </div>
+    <div className="flex h-full flex-col justify-center gap-10 px-8 py-12">
+      <div className="space-y-4">
+        <p className="text-sm font-medium tracking-wide text-white/60 uppercase">
+          Why QuizPrep
+        </p>
+        <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+          Walk in confident.
+          <br />
+          Walk out proud.
+        </h2>
+        <p className="max-w-md text-lg leading-relaxed text-white/75">
+          Interviews reward clarity under pressure.
+        </p>
       </div>
 
-      <PublicQuizzes />
+      <div className="space-y-4">
+        {MARKETING_HIGHLIGHTS.map((item) => (
+          <div
+            key={item.title}
+            className="rounded-2xl border border-white/15 bg-white/10 px-5 py-4"
+          >
+            <p className="font-semibold text-white">{item.title}</p>
+            <p className="mt-1 text-sm leading-relaxed text-white/70">
+              {item.body}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

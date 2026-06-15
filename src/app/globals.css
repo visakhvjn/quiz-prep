@@ -116,4 +116,38 @@
     background: oklch(1 0 0 / 0.85);
     backdrop-filter: blur(12px);
   }
+
+  .home-hero {
+    background: linear-gradient(
+      165deg,
+      oklch(0.38 0.18 302) 0%,
+      oklch(0.5 0.22 298) 40%,
+      oklch(0.44 0.2 305) 100%
+    );
+  }
+
+  .home-hero-glow {
+    background:
+      radial-gradient(circle at 20% 30%, oklch(1 0 0 / 0.12), transparent 40%),
+      radial-gradient(circle at 80% 70%, oklch(0.7 0.15 280 / 0.2), transparent 45%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .home-card-featured {
+    background:
+      linear-gradient(135deg, oklch(0.99 0.01 300) 0%, oklch(0.97 0.03 300) 100%);
+  }
+
+  .home-cta {
+    background:
+      linear-gradient(135deg, oklch(0.97 0.04 300) 0%, oklch(0.99 0.01 300) 100%);
+    border: 1px solid oklch(0.91 0.03 300);
+  }
+
+  .home-empty-quizzes {
+    background:
+      radial-gradient(ellipse at top, oklch(0.95 0.05 300 / 0.6), transparent 70%),
+      oklch(0.99 0.005 300);
+    border: 1px dashed oklch(0.85 0.05 300);
+  }
 }

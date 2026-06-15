@@ -45,9 +45,17 @@ export async function POST(request: Request, context: RouteContext) {
     return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
   }
 
+  const participantName = body.participantName?.trim();
+  if (!participantName) {
+    return NextResponse.json(
+      { error: "Participant name is required" },
+      { status: 400 },
+    );
+  }
+
   const attempt = await createQuizAttempt({
     quizId: id,
-    participantName: body.participantName,
+    participantName,
     score: body.score,
     total: body.total,
     answers: body.answers,

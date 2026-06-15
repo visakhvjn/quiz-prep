@@ -18,6 +18,7 @@ export default function QuizPlayPage() {
   const quiz = data?.quiz ?? null;
 
   const [participantName, setParticipantName] = useState("");
+  const [nameError, setNameError] = useState<string | null>(null);
   const [hasStarted, setHasStarted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -44,7 +45,7 @@ export default function QuizPlayPage() {
         await apiFetch(`/api/quiz/${quizId}/attempts`, {
           method: "POST",
           body: JSON.stringify({
-            participantName: participantName.trim() || undefined,
+            participantName: participantName.trim(),
             score,
             total,
             answers,
@@ -91,6 +92,19 @@ export default function QuizPlayPage() {
   }
 
   if (!hasStarted) {
+    const questionCount = quiz.questions.length;
+    const optionCount = quiz.questions[0]?.options.length ?? 4;
+
+    function handleStart() {
+      const trimmedName = participantName.trim();
+      if (!trimmedName) {
+        setNameError("Enter your name to start the quiz.");
+        return;
+      }
+      setNameError(null);
+      setHasStarted(true);
+    }
+
     return (
       <main className="flex h-full min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto px-4 py-10">
         <div className="w-full max-w-lg space-y-6 rounded-3xl border border-primary/10 bg-white p-8 shadow-xl shadow-primary/10">
@@ -99,22 +113,61 @@ export default function QuizPlayPage() {
               Ready to practice
             </p>
             <h1 className="text-3xl font-bold tracking-tight">{quiz.topics}</h1>
-            <p className="text-sm text-muted-foreground">
-              {quiz.difficulty} · {quiz.questions.length} questions
+            <p className="text-sm text-muted-foreground capitalize">
+              {quiz.difficulty} difficulty
             </p>
           </div>
 
+          <div className="rounded-2xl border border-primary/10 bg-primary/5 px-5 py-4">
+            <p className="text-xs font-semibold tracking-wide text-primary uppercase">
+              Quiz rules
+            </p>
+            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-foreground/90">
+              <li>
+                This quiz has <strong>{questionCount} questions</strong>.
+              </li>
+              <li>
+                Each question has <strong>{optionCount} options</strong> — pick
+                exactly one answer.
+              </li>
+              <li>Questions are shown one at a time, in order.</li>
+              <li>
+                After you select an answer, you&apos;ll see whether it was
+                correct and get a short explanation.
+              </li>
+              <li>You can&apos;t change an answer once it&apos;s submitted.</li>
+              <li>
+                Complete all {questionCount} questions to see your final score.
+              </li>
+            </ul>
+          </div>
+
           <div className="space-y-2">
-            <Label htmlFor="participant-name">Your name (optional)</Label>
+            <Label htmlFor="participant-name">
+              Your name <span className="text-destructive">*</span>
+            </Label>
             <Input
               id="participant-name"
               value={participantName}
-              onChange={(event) => setParticipantName(event.target.value)}
+              onChange={(event) => {
+                setParticipantName(event.target.value);
+                if (nameError) setNameError(null);
+              }}
               placeholder="e.g. Alex"
+              required
+              aria-invalid={Boolean(nameError)}
             />
+            {nameError ? (
+              <p className="text-sm text-destructive">{nameError}</p>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Your name is saved with this attempt so the quiz owner can track
+                results.
+              </p>
+            )}
           </div>
 
-          <Button className="w-full" size="lg" onClick={() => setHasStarted(true)}>
+          <Button className="w-full" size="lg" onClick={handleStart}>
             Start quiz
           </Button>
         </div>
