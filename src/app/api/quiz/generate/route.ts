@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { getAgentNameForNode, quizGraph } from "@/lib/agents/graph";
+import { createQuizRecord, getOwnerIdFromRequest } from "@/lib/quiz-db";
 import type { Difficulty, GenerateQuizRequest, Quiz, QuizStreamEvent } from "@/types/quiz";
 
 export const runtime = "nodejs";
@@ -25,6 +26,11 @@ export async function POST(request: Request) {
 
   const difficulty: Difficulty = body.difficulty ?? "medium";
   const questionCount = Math.min(Math.max(body.questionCount ?? 5, 3), 8);
+  const ownerId = getOwnerIdFromRequest(request);
+
+  if (!ownerId) {
+    return Response.json({ error: "Owner id required" }, { status: 401 });
+  }
 
   const stream = new ReadableStream({
     async start(controller) {
@@ -87,9 +93,18 @@ export async function POST(request: Request) {
           id: uuidv4(),
           topics,
           difficulty,
+          visibility: "private",
           questions: finalState.questions,
           createdAt: new Date().toISOString(),
         };
+
+        await createQuizRecord({
+          id: quiz.id,
+          ownerId,
+          topics: quiz.topics,
+          difficulty: quiz.difficulty,
+          questions: quiz.questions,
+        });
 
         send({ type: "complete", quiz });
       } catch (error) {

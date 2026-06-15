@@ -1,50 +1,58 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { ExternalLink } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { QuizProgress } from "@/components/quiz-progress";
-import { QuizQuestionView } from "@/components/quiz-question";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { QuizAttemptsPanel } from "@/components/quiz-attempts-panel";
+import { QuizQuestionsEditor } from "@/components/quiz-questions-editor";
+import { QuizSettingsPanel } from "@/components/quiz-settings-panel";
 import { buttonVariants } from "@/components/ui/button";
-import { getQuizSnapshot, subscribeToQuizStore } from "@/lib/quiz-store";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import { useQuiz } from "@/lib/use-quizzes-list";
+import type { Quiz } from "@/types/quiz";
 
-function useStoredQuiz(id: string) {
-  return useSyncExternalStore(
-    subscribeToQuizStore,
-    () => getQuizSnapshot(id),
-    () => null,
-  );
-}
-
-export default function QuizPage() {
+export default function QuizManagePage() {
   const params = useParams<{ id: string }>();
-  const quiz = useStoredQuiz(params.id);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [showResult, setShowResult] = useState(false);
-  const [score, setScore] = useState(0);
-  const [isFinished, setIsFinished] = useState(false);
+  const router = useRouter();
+  const { data, isLoading, error, reload } = useQuiz(params.id);
+  const [quiz, setQuiz] = useState<Quiz | null>(null);
 
   useEffect(() => {
-    document.title = isFinished
-      ? "Results · QuizPrep"
-      : "Practice · QuizPrep";
-  }, [isFinished]);
+    if (data?.quiz) {
+      setQuiz(data.quiz);
+      document.title = `${data.quiz.topics} · QuizPrep`;
+    }
+  }, [data]);
 
-  if (!quiz) {
+  useEffect(() => {
+    if (!isLoading && data && !data.isOwner) {
+      router.replace(`/quiz/${params.id}/play`);
+    }
+  }, [data, isLoading, params.id, router]);
+
+  if (isLoading) {
     return (
-      <main className="app-gradient flex flex-1 items-center justify-center px-4 py-10">
-        <div className="w-full max-w-lg overflow-hidden rounded-3xl border border-primary/10 bg-white p-8 text-center shadow-xl shadow-primary/10">
+      <main className="flex h-full items-center justify-center px-4">
+        <p className="text-sm text-muted-foreground">Loading quiz…</p>
+      </main>
+    );
+  }
+
+  if (!quiz || error || !data?.isOwner) {
+    return (
+      <main className="flex h-full items-center justify-center px-4">
+        <div className="w-full max-w-lg rounded-3xl border border-primary/10 bg-white p-8 text-center shadow-xl shadow-primary/10">
           <h1 className="text-2xl font-bold">Quiz not found</h1>
           <p className="mt-3 text-muted-foreground">
-            This quiz may have expired from local storage or the link is invalid.
+            This quiz may not exist or you do not have access to manage it.
           </p>
-          <Link
-            href="/"
-            className={buttonVariants({
-              className: "mt-6 shadow-lg shadow-primary/20",
-            })}
-          >
+          <Link href="/" className={buttonVariants({ className: "mt-6" })}>
             Back to home
           </Link>
         </div>
@@ -52,58 +60,63 @@ export default function QuizPage() {
     );
   }
 
-  if (isFinished) {
-    return (
-      <main className="app-gradient flex flex-1 items-center justify-center px-4 py-10">
-        <div className="w-full max-w-lg">
-          <QuizProgress score={score} total={quiz.questions.length} />
-        </div>
-      </main>
-    );
-  }
-
-  const currentQuestion = quiz.questions[currentIndex];
-
-  function handleSelect(index: number) {
-    if (showResult) return;
-    setSelectedIndex(index);
-    setShowResult(true);
-    if (index === currentQuestion.correctIndex) {
-      setScore((value) => value + 1);
-    }
-  }
-
-  function handleNext() {
-    if (!quiz) return;
-    if (currentIndex + 1 >= quiz.questions.length) {
-      setIsFinished(true);
-      return;
-    }
-    setCurrentIndex((value) => value + 1);
-    setSelectedIndex(null);
-    setShowResult(false);
-  }
-
   return (
     <main className="flex h-full min-h-0 flex-1 flex-col overflow-y-auto">
-      <div className="border-b border-primary/10 bg-white/80 px-4 py-3 backdrop-blur-sm sm:px-6">
-        <p className="text-xs font-medium tracking-wide text-primary uppercase">
-          Practice session
-        </p>
-        <p className="text-sm text-muted-foreground">
-          {quiz.topics} · {quiz.difficulty} · {quiz.questions.length} questions
-        </p>
+      <div className="border-b border-primary/10 bg-white/80 px-4 py-4 backdrop-blur-sm sm:px-6">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-medium tracking-wide text-primary uppercase">
+              Quiz editor
+            </p>
+            <h1 className="text-2xl font-bold tracking-tight">{quiz.topics}</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {quiz.difficulty} · {quiz.questions.length} questions ·{" "}
+              {quiz.visibility === "public" ? "Public" : "Private"}
+            </p>
+          </div>
+          <Link
+            href={`/quiz/${quiz.id}/play`}
+            className={buttonVariants({ variant: "outline" })}
+          >
+            <ExternalLink className="size-4" />
+            Preview quiz
+          </Link>
+        </div>
       </div>
 
-      <QuizQuestionView
-        question={currentQuestion}
-        questionNumber={currentIndex + 1}
-        totalQuestions={quiz.questions.length}
-        selectedIndex={selectedIndex}
-        showResult={showResult}
-        onSelect={handleSelect}
-        onNext={handleNext}
-      />
+      <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6">
+        <Tabs defaultValue="questions" className="gap-6">
+          <TabsList variant="line">
+            <TabsTrigger value="questions">Questions</TabsTrigger>
+            <TabsTrigger value="attempts">Attempts</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="questions" className="pt-2">
+            <QuizQuestionsEditor
+              quiz={quiz}
+              onSaved={(nextQuiz) => {
+                setQuiz(nextQuiz);
+                reload();
+              }}
+            />
+          </TabsContent>
+
+          <TabsContent value="attempts" className="pt-2">
+            <QuizAttemptsPanel quizId={quiz.id} />
+          </TabsContent>
+
+          <TabsContent value="settings" className="pt-2">
+            <QuizSettingsPanel
+              quiz={quiz}
+              onSaved={(nextQuiz) => {
+                setQuiz(nextQuiz);
+                reload();
+              }}
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
     </main>
   );
 }

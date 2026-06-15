@@ -12,7 +12,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { saveQuiz } from "@/lib/quiz-store";
+import { apiFetch } from "@/lib/api-client";
+import { notifyQuizListChanged } from "@/lib/quiz-events";
 import { cn } from "@/lib/utils";
 import type { AgentName, Difficulty, QuizStreamEvent } from "@/types/quiz";
 
@@ -40,7 +41,7 @@ export function TopicForm() {
     setCompletedAgents([]);
 
     try {
-      const response = await fetch("/api/quiz/generate", {
+      const response = await apiFetch("/api/quiz/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -91,7 +92,7 @@ export function TopicForm() {
           }
 
           if (event.type === "complete") {
-            saveQuiz(event.quiz);
+            notifyQuizListChanged();
             router.push(`/quiz/${event.quiz.id}`);
             return;
           }

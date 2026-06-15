@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+type QuizQuestion {
+  id           String
+  subtopic     String
+  question     String
+  options      String[]
+  correctIndex Int
+  explanation  String?
+}
+
+type AttemptAnswer {
+  questionId    String
+  question      String
+  options       String[]
+  selectedIndex Int
+  correctIndex  Int
+  isCorrect     Boolean
+}
+
+model Quiz {
+  id         String         @id @map("_id")
+  ownerId    String
+  topics     String
+  difficulty String
+  visibility String         @default("private")
+  questions  QuizQuestion[]
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  attempts   Attempt[]
+
+  @@index([ownerId])
+  @@index([visibility])
+}
+
+model Attempt {
+  id              String           @id @default(auto()) @map("_id") @db.ObjectId
+  quizId          String
+  quiz            Quiz             @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  participantName String?
+  score           Int
+  total           Int
+  answers         AttemptAnswer[]
+  completedAt     DateTime         @default(now())
+
+  @@index([quizId])
+}
