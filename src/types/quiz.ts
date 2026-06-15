@@ -74,6 +74,18 @@ export interface GenerateQuizRequest {
   topics: string;
   difficulty?: Difficulty;
   questionCount?: number;
+  sourceMaterial?: string;
+}
+
+export interface AccountResponse {
+  plan: "hobby" | "premium";
+  limits: {
+    maxQuestions: number;
+    minQuestions: number;
+    documentUpload: boolean;
+    modelLabel: string;
+    description: string;
+  };
 }
 
 export type QuizStreamEvent =

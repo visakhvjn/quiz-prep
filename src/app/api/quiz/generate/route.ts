@@ -1,5 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import { getAgentNameForNode, quizGraph } from "@/lib/agents/graph";
+import { clampQuestionCount } from "@/lib/plans";
+import { getAccountInfo } from "@/lib/owner-db";
 import { createQuizRecord, getOwnerIdFromRequest } from "@/lib/quiz-db";
 import type { Difficulty, GenerateQuizRequest, Quiz, QuizStreamEvent } from "@/types/quiz";
 
@@ -25,11 +27,24 @@ export async function POST(request: Request) {
   }
 
   const difficulty: Difficulty = body.difficulty ?? "medium";
-  const questionCount = Math.min(Math.max(body.questionCount ?? 5, 3), 8);
   const ownerId = getOwnerIdFromRequest(request);
 
   if (!ownerId) {
     return Response.json({ error: "Owner id required" }, { status: 401 });
+  }
+
+  const account = await getAccountInfo(ownerId);
+  const questionCount = clampQuestionCount(
+    account.plan,
+    body.questionCount ?? 5,
+  );
+
+  const sourceMaterial = body.sourceMaterial?.trim();
+  if (sourceMaterial && !account.limits.documentUpload) {
+    return Response.json(
+      { error: "Document-based generation requires Premium" },
+      { status: 403 },
+    );
   }
 
   const stream = new ReadableStream({
@@ -45,6 +60,8 @@ export async function POST(request: Request) {
       try {
         const initialState = {
           rawTopics: topics,
+          sourceMaterial: sourceMaterial ?? "",
+          plan: account.plan,
           subtopics: [] as string[],
           draftQuestions: [],
           questions: [],

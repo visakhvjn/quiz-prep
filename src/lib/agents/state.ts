@@ -3,6 +3,8 @@ import type { Difficulty, DraftQuestion, QuizQuestion } from "@/types/quiz";
 
 export const QuizGraphState = Annotation.Root({
   rawTopics: Annotation<string>,
+  sourceMaterial: Annotation<string>,
+  plan: Annotation<"hobby" | "premium">,
   subtopics: Annotation<string[]>,
   draftQuestions: Annotation<DraftQuestion[]>,
   questions: Annotation<QuizQuestion[]>,

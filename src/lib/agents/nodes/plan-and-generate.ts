@@ -14,6 +14,8 @@ export async function planAndGenerateNode(
     questionCount: state.questionCount,
     targetDifficulty: state.targetDifficulty,
     feedback: [],
+    sourceMaterial: state.sourceMaterial,
+    plan: state.plan,
   });
 
   return {

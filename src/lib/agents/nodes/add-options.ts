@@ -23,7 +23,7 @@ function shuffleOptions(options: string[], correctIndex: number) {
 export async function addOptionsNode(
   state: QuizGraphStateType,
 ): Promise<Partial<QuizGraphStateType>> {
-  const result = await runAddOptionsAgent(state.draftQuestions);
+  const result = await runAddOptionsAgent(state.draftQuestions, state.plan);
 
   const questions: QuizQuestion[] = result.questions.map((item) => {
     const shuffled = shuffleOptions(item.options, item.correctIndex);

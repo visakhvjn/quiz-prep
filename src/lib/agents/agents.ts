@@ -2,6 +2,7 @@ import {
   addOptionsOutputSchema,
   planAndGenerateOutputSchema,
 } from "@/lib/schemas";
+import type { PlanTier } from "@/lib/plans";
 import {
   createStructuredAgent,
   invokeStructuredAgent,
@@ -10,18 +11,20 @@ import {
 const PLAN_AGENT = "plan_and_generate";
 const OPTIONS_AGENT = "add_options";
 
-function getPlanAndGenerateAgent() {
+function getPlanAndGenerateAgent(plan: PlanTier) {
   return createStructuredAgent({
     name: PLAN_AGENT,
+    plan,
     systemPrompt:
-      "You prepare interview practice material. Clean user topic input, expand it into focused subtopics, then write technical interview questions with clear correct answers. Do not include multiple-choice options.",
+      "You prepare interview practice material. Clean user topic input, expand it into focused subtopics, then write technical interview questions with clear correct answers. Do not include multiple-choice options. When source material is provided, ground questions in that content.",
     responseFormat: planAndGenerateOutputSchema,
   });
 }
 
-function getAddOptionsAgent() {
+function getAddOptionsAgent(plan: PlanTier) {
   return createStructuredAgent({
     name: OPTIONS_AGENT,
+    plan,
     systemPrompt:
       "Turn each interview question into a multiple-choice item with exactly 4 plausible options and 1 correct answer. Distractors should be realistic mistakes a candidate might make. For every question, write a descriptive explanation (2-4 sentences) that teaches the concept: state why the correct answer is right, briefly address why the wrong options fail, and add a practical interview tip or real-world example when helpful.",
     responseFormat: addOptionsOutputSchema,
@@ -33,13 +36,19 @@ export async function runPlanAndGenerateAgent(input: {
   questionCount: number;
   targetDifficulty: string;
   feedback: string[];
+  sourceMaterial?: string;
+  plan: PlanTier;
 }) {
-  getPlanAndGenerateAgent();
+  getPlanAndGenerateAgent(input.plan);
 
   const feedbackSection =
     input.feedback.length > 0
       ? `\n\nFix these issues from the previous attempt:\n${input.feedback.map((item) => `- ${item}`).join("\n")}`
       : "";
+
+  const sourceSection = input.sourceMaterial?.trim()
+    ? `\n\nUse this uploaded reference material when writing questions. Prefer facts and concepts from the document:\n${input.sourceMaterial.trim().slice(0, 12000)}`
+    : "";
 
   return invokeStructuredAgent<{
     subtopics: string[];
@@ -50,7 +59,8 @@ export async function runPlanAndGenerateAgent(input: {
     }>;
   }>(
     PLAN_AGENT,
-    `Topics entered by the user:\n${input.topics}\n\nCreate exactly ${input.questionCount} questions spread across the subtopics. Difficulty target: ${input.targetDifficulty}.${feedbackSection}`,
+    `Topics entered by the user:\n${input.topics}\n\nCreate exactly ${input.questionCount} questions spread across the subtopics. Difficulty target: ${input.targetDifficulty}.${sourceSection}${feedbackSection}`,
+    input.plan,
   );
 }
 
@@ -60,8 +70,9 @@ export async function runAddOptionsAgent(
     question: string;
     correctAnswer: string;
   }>,
+  plan: PlanTier,
 ) {
-  getAddOptionsAgent();
+  getAddOptionsAgent(plan);
 
   return invokeStructuredAgent<{
     questions: Array<{
@@ -71,5 +82,5 @@ export async function runAddOptionsAgent(
       correctIndex: number;
       explanation?: string;
     }>;
-  }>(OPTIONS_AGENT, JSON.stringify(draftQuestions, null, 2));
+  }>(OPTIONS_AGENT, JSON.stringify(draftQuestions, null, 2), plan);
 }

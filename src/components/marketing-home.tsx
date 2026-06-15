@@ -7,6 +7,8 @@ import {
   Users,
 } from "lucide-react";
 import { PublicQuizzesSection } from "@/components/public-quizzes-section";
+import { PricingSection } from "@/components/pricing-section";
+import { AppFooter } from "@/components/app-footer";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -151,6 +153,8 @@ export function MarketingHome() {
 
       <PublicQuizzesSection />
 
+      <PricingSection />
+
       {/* CTA */}
       <section className="px-6 pb-20 sm:px-10 lg:px-14">
         <div className="home-cta mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 rounded-3xl px-8 py-12 text-center sm:flex-row sm:text-left">
@@ -174,6 +178,8 @@ export function MarketingHome() {
           </Link>
         </div>
       </section>
+
+      <AppFooter />
     </div>
   );
 }
