@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
-import { Navbar } from "@/components/navbar";
+import { AppShell } from "@/components/app-shell";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -29,9 +29,8 @@ export default function RootLayout({
       lang="en"
       className={`${roboto.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col app-gradient">
-        <Navbar />
-        {children}
+      <body className="min-h-full app-gradient">
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

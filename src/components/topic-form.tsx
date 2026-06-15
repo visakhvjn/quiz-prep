@@ -109,8 +109,8 @@ export function TopicForm() {
   }
 
   return (
-    <div className="grid min-h-[calc(100vh-3.5rem)] lg:grid-cols-2">
-      <section className="flex flex-col justify-center px-6 py-12 sm:px-10 lg:px-14">
+    <div className="grid h-full min-h-0 w-full lg:grid-cols-2">
+      <section className="flex flex-col justify-center overflow-y-auto px-6 py-12 sm:px-10 lg:px-14">
         <div className="mx-auto w-full max-w-lg space-y-8">
           <div className="space-y-3">
             <p className="text-sm font-medium tracking-widest text-primary uppercase">
@@ -209,7 +209,7 @@ export function TopicForm() {
         </div>
       </section>
 
-      <section className="panel-purple relative flex min-h-[320px] flex-col border-t border-white/10 lg:min-h-full lg:border-t-0 lg:border-l">
+      <section className="panel-purple relative flex h-full min-h-[320px] flex-col border-t border-white/10 lg:min-h-0 lg:border-t-0 lg:border-l">
         {isGenerating ? (
           <AgentStatus
             activeAgent={activeAgent}

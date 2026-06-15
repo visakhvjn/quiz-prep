@@ -85,7 +85,7 @@ export default function QuizPage() {
   }
 
   return (
-    <main className="flex min-h-[calc(100vh-3.5rem)] flex-1 flex-col">
+    <main className="flex h-full min-h-0 flex-1 flex-col overflow-y-auto">
       <div className="border-b border-primary/10 bg-white/80 px-4 py-3 backdrop-blur-sm sm:px-6">
         <p className="text-xs font-medium tracking-wide text-primary uppercase">
           Practice session
