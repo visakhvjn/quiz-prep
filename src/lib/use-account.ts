@@ -7,11 +7,12 @@ import type { AccountResponse } from "@/types/quiz";
 const DEFAULT_ACCOUNT: AccountResponse = {
   plan: "hobby",
   limits: {
-    maxQuestions: 5,
+    maxQuestions: 10,
     minQuestions: 3,
     documentUpload: false,
-    modelLabel: "Standard AI models",
+    modelLabel: "Efficient AI models",
     description: "Great for quick practice sessions",
+    allowedDifficulties: ["easy", "medium"],
   },
 };
 

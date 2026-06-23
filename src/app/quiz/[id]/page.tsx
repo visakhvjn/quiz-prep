@@ -14,7 +14,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { useQuiz } from "@/lib/use-quizzes-list";
+import { getQuizTitle, useQuiz } from "@/lib/use-quizzes-list";
 import type { Quiz } from "@/types/quiz";
 
 export default function QuizManagePage() {
@@ -26,7 +26,7 @@ export default function QuizManagePage() {
   useEffect(() => {
     if (data?.quiz) {
       setQuiz(data.quiz);
-      document.title = `${data.quiz.topics} · QuizPrep`;
+      document.title = `${getQuizTitle(data.quiz)} · QuizPrep`;
     }
   }, [data]);
 
@@ -68,7 +68,7 @@ export default function QuizManagePage() {
             <p className="text-xs font-medium tracking-wide text-primary uppercase">
               Quiz editor
             </p>
-            <h1 className="text-2xl font-bold tracking-tight">{quiz.topics}</h1>
+            <h1 className="text-2xl font-bold tracking-tight">{getQuizTitle(quiz)}</h1>
             <p className="mt-1 text-sm text-muted-foreground">
               {quiz.difficulty} · {quiz.questions.length} questions ·{" "}
               {quiz.visibility === "public" ? "Public" : "Private"}

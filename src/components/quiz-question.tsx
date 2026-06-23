@@ -66,51 +66,60 @@ export function QuizQuestionView({
                 const showIncorrect = showResult && isSelected && !isCorrect;
 
                 return (
-                  <button
-                    key={`${question.id}-${index}`}
-                    type="button"
-                    disabled={showResult}
-                    onClick={() => onSelect(index)}
-                    className={cn(
-                      "rounded-xl border px-4 py-3.5 text-left text-base transition-all duration-200",
-                      !showResult &&
-                        "border-primary/15 bg-white hover:border-primary/30 hover:bg-primary/5",
-                      isSelected &&
-                        !showResult &&
-                        "border-primary bg-primary/5 shadow-sm",
-                      showCorrect &&
-                        "border-emerald-400 bg-emerald-50 text-emerald-950",
-                      showIncorrect &&
-                        "border-red-300 bg-red-50 text-red-950",
-                    )}
-                  >
-                    <span
+                  <div key={`${question.id}-${index}`} className="flex flex-col">
+                    <button
+                      type="button"
+                      disabled={showResult}
+                      onClick={() => onSelect(index)}
                       className={cn(
-                        "mr-3 inline-flex h-7 w-7 items-center justify-center rounded-lg text-sm font-semibold",
-                        !showResult && "bg-primary/10 text-primary",
-                        showCorrect && "bg-emerald-200 text-emerald-900",
-                        showIncorrect && "bg-red-200 text-red-900",
+                        "rounded-xl border px-4 py-3.5 text-left text-base transition-all duration-200",
+                        !showResult &&
+                          "border-primary/15 bg-white hover:border-primary/30 hover:bg-primary/5",
+                        isSelected &&
+                          !showResult &&
+                          "border-primary bg-primary/5 shadow-sm",
+                        showCorrect &&
+                          "border-emerald-400 bg-emerald-50 text-emerald-950",
+                        showIncorrect &&
+                          "border-red-300 bg-red-50 text-red-950",
+                        showResult &&
+                          isSelected &&
+                          question.explanation &&
+                          "rounded-b-none border-b-0",
                       )}
                     >
-                      {String.fromCharCode(65 + index)}
-                    </span>
-                    {option}
-                  </button>
+                      <span
+                        className={cn(
+                          "mr-3 inline-flex h-7 w-7 items-center justify-center rounded-lg text-sm font-semibold",
+                          !showResult && "bg-primary/10 text-primary",
+                          showCorrect && "bg-emerald-200 text-emerald-900",
+                          showIncorrect && "bg-red-200 text-red-900",
+                        )}
+                      >
+                        {String.fromCharCode(65 + index)}
+                      </span>
+                      {option}
+                    </button>
+                    {showResult && isSelected && question.explanation ? (
+                      <div
+                        className={cn(
+                          "rounded-b-xl border border-t-0 px-4 py-3.5 text-sm leading-relaxed",
+                          isCorrect
+                            ? "border-emerald-400 bg-emerald-50 text-emerald-950"
+                            : "border-red-300 bg-red-50 text-red-950",
+                        )}
+                      >
+                        <p className="mb-1.5 text-xs font-semibold tracking-wide uppercase opacity-80">
+                          Explanation
+                        </p>
+                        <p>{question.explanation}</p>
+                      </div>
+                    ) : null}
+                  </div>
                 );
               })}
             </div>
           </div>
-
-          {showResult && question.explanation && (
-            <div className="rounded-2xl border border-primary/15 bg-primary/5 px-5 py-4">
-              <p className="mb-2 text-xs font-semibold tracking-wide text-primary uppercase">
-                Explanation
-              </p>
-              <p className="text-sm leading-relaxed text-foreground/90">
-                {question.explanation}
-              </p>
-            </div>
-          )}
         </div>
       </div>
 

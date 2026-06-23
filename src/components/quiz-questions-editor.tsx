@@ -70,7 +70,10 @@ export function QuizQuestionsEditor({ quiz, onSaved }: QuizQuestionsEditorProps)
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="quiz-topics">Quiz title / topics</Label>
+        <Label htmlFor="quiz-topics">Source topics</Label>
+        <p className="text-xs text-muted-foreground">
+          The raw topics you entered when creating this quiz.
+        </p>
         <Input
           id="quiz-topics"
           value={topics}

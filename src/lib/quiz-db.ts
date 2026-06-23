@@ -16,6 +16,9 @@ export function toQuiz(record: DbQuiz): Quiz {
   return {
     id: record.id,
     topics: record.topics,
+    title: record.title,
+    description: record.description,
+    subtopics: [...record.subtopics],
     difficulty: record.difficulty as Difficulty,
     visibility: record.visibility as QuizVisibility,
     questions: record.questions.map((question) => ({
@@ -64,6 +67,9 @@ export async function createQuizRecord(input: {
   id: string;
   ownerId: string;
   topics: string;
+  title: string;
+  description: string;
+  subtopics: string[];
   difficulty: Difficulty;
   questions: QuizQuestion[];
 }) {
@@ -72,6 +78,9 @@ export async function createQuizRecord(input: {
       id: input.id,
       ownerId: input.ownerId,
       topics: input.topics,
+      title: input.title,
+      description: input.description,
+      subtopics: input.subtopics,
       difficulty: input.difficulty,
       visibility: "private",
       questions: input.questions.map((question) => ({
@@ -115,6 +124,8 @@ export async function updateQuizRecord(
   ownerId: string,
   data: {
     topics?: string;
+    title?: string;
+    description?: string;
     difficulty?: Difficulty;
     visibility?: QuizVisibility;
     questions?: QuizQuestion[];
@@ -129,6 +140,8 @@ export async function updateQuizRecord(
     where: { id },
     data: {
       ...(data.topics !== undefined ? { topics: data.topics } : {}),
+      ...(data.title !== undefined ? { title: data.title } : {}),
+      ...(data.description !== undefined ? { description: data.description } : {}),
       ...(data.difficulty !== undefined ? { difficulty: data.difficulty } : {}),
       ...(data.visibility !== undefined ? { visibility: data.visibility } : {}),
       ...(data.questions !== undefined

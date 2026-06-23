@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { getAgentNameForNode, quizGraph } from "@/lib/agents/graph";
-import { clampQuestionCount } from "@/lib/plans";
+import { clampQuestionCount, isDifficultyAllowed } from "@/lib/plans";
 import { getAccountInfo } from "@/lib/owner-db";
 import { createQuizRecord, getOwnerIdFromRequest } from "@/lib/quiz-db";
 import type { Difficulty, GenerateQuizRequest, Quiz, QuizStreamEvent } from "@/types/quiz";
@@ -26,7 +26,8 @@ export async function POST(request: Request) {
     return Response.json({ error: "Topics are required" }, { status: 400 });
   }
 
-  const difficulty: Difficulty = body.difficulty ?? "medium";
+  const userDescription = body.description?.trim() ?? "";
+
   const ownerId = getOwnerIdFromRequest(request);
 
   if (!ownerId) {
@@ -34,6 +35,14 @@ export async function POST(request: Request) {
   }
 
   const account = await getAccountInfo(ownerId);
+  const difficulty: Difficulty = body.difficulty ?? "medium";
+
+  if (!isDifficultyAllowed(account.plan, difficulty)) {
+    return Response.json(
+      { error: "Hard difficulty requires Premium" },
+      { status: 403 },
+    );
+  }
   const questionCount = clampQuestionCount(
     account.plan,
     body.questionCount ?? 5,
@@ -60,6 +69,9 @@ export async function POST(request: Request) {
       try {
         const initialState = {
           rawTopics: topics,
+          userDescription,
+          title: "",
+          description: userDescription,
           sourceMaterial: sourceMaterial ?? "",
           plan: account.plan,
           subtopics: [] as string[],
@@ -109,6 +121,9 @@ export async function POST(request: Request) {
         const quiz: Quiz = {
           id: uuidv4(),
           topics,
+          title: finalState.title.trim(),
+          description: finalState.description.trim(),
+          subtopics: finalState.subtopics,
           difficulty,
           visibility: "private",
           questions: finalState.questions,
@@ -119,6 +134,9 @@ export async function POST(request: Request) {
           id: quiz.id,
           ownerId,
           topics: quiz.topics,
+          title: quiz.title,
+          description: quiz.description,
+          subtopics: quiz.subtopics,
           difficulty: quiz.difficulty,
           questions: quiz.questions,
         });

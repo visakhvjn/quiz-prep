@@ -9,6 +9,20 @@ export const draftQuestionSchema = z.object({
 });
 
 export const planAndGenerateOutputSchema = z.object({
+  title: z
+    .string()
+    .min(8)
+    .max(80)
+    .describe(
+      "A catchy, engaging quiz title inspired by the topics. Do NOT paste the user's raw topic list — write like a practice pack name (e.g. 'Master React Hooks' not 'react hooks, useEffect, useState')",
+    ),
+  description: z
+    .string()
+    .min(30)
+    .max(220)
+    .describe(
+      "An enticing one-sentence hook for the quiz card that makes someone want to start — highlight the skill they'll build, not a dry topic list",
+    ),
   subtopics: z
     .array(z.string().min(2))
     .min(3)

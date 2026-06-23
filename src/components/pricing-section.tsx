@@ -11,8 +11,9 @@ const PLANS = [
     period: "forever",
     description: "Perfect for quick interview drills and trying QuizPrep out.",
     features: [
-      "Up to 5 questions per quiz",
-      "Standard AI models",
+      "Up to 10 questions per quiz",
+      "Easy & medium difficulty",
+      "Efficient AI models",
       "Topic-based generation",
       "Private & public sharing",
       "Attempt tracking",

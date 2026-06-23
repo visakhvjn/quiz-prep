@@ -19,6 +19,8 @@ export async function planAndGenerateNode(
   });
 
   return {
+    title: result.title,
+    description: state.userDescription.trim() || result.description,
     subtopics: result.subtopics,
     draftQuestions: result.questions.slice(0, state.questionCount),
     retryCount: 0,

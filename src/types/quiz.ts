@@ -20,6 +20,9 @@ export interface QuizQuestion {
 export interface Quiz {
   id: string;
   topics: string;
+  title: string;
+  description: string;
+  subtopics: string[];
   difficulty: Difficulty;
   visibility: QuizVisibility;
   questions: QuizQuestion[];
@@ -63,6 +66,8 @@ export interface CreateAttemptRequest {
 
 export interface UpdateQuizRequest {
   topics?: string;
+  title?: string;
+  description?: string;
   difficulty?: Difficulty;
   visibility?: QuizVisibility;
   questions?: QuizQuestion[];
@@ -72,6 +77,7 @@ export type AgentName = "prepare" | "options";
 
 export interface GenerateQuizRequest {
   topics: string;
+  description?: string;
   difficulty?: Difficulty;
   questionCount?: number;
   sourceMaterial?: string;
@@ -85,6 +91,7 @@ export interface AccountResponse {
     documentUpload: boolean;
     modelLabel: string;
     description: string;
+    allowedDifficulties: readonly Difficulty[];
   };
 }
 

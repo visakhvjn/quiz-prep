@@ -67,6 +67,38 @@ export function getQuizChatTitle(topics: string) {
   return `${trimmed.slice(0, 42)}…`;
 }
 
+export function getQuizSubtopics(quiz: Quiz) {
+  if (quiz.subtopics.length > 0) return quiz.subtopics;
+  return [
+    ...new Set(
+      quiz.questions.map((question) => question.subtopic.trim()).filter(Boolean),
+    ),
+  ];
+}
+
+export function getQuizTitle(quiz: Quiz) {
+  const title = quiz.title.trim();
+  if (title) return title;
+
+  const [firstSubtopic] = getQuizSubtopics(quiz);
+  if (firstSubtopic) return `${firstSubtopic} Practice`;
+
+  return getQuizChatTitle(quiz.topics);
+}
+
+export function getQuizDisplayDescription(quiz: Quiz) {
+  const trimmed = quiz.description.trim();
+  if (trimmed) return trimmed;
+
+  const subtopics = getQuizSubtopics(quiz);
+  if (subtopics.length > 0) {
+    const preview = subtopics.slice(0, 3).join(", ");
+    return `Sharpen your skills across ${preview}${subtopics.length > 3 ? ", and more" : ""}.`;
+  }
+
+  return "A focused practice round built to help you interview with confidence.";
+}
+
 export function formatQuizDate(iso: string) {
   const date = new Date(iso);
   const now = new Date();

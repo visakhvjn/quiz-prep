@@ -40,6 +40,7 @@ export function TopicForm() {
   const [completedAgents, setCompletedAgents] = useState<AgentName[]>([]);
 
   const maxQuestions = account.limits.maxQuestions;
+  const allowedDifficulties = account.limits.allowedDifficulties;
   const effectiveQuestionCount = questionCounts.includes(Number(questionCount))
     ? questionCount
     : String(maxQuestions);
@@ -267,7 +268,7 @@ export function TopicForm() {
               <div className="space-y-2">
                 <p className="text-sm font-medium">Difficulty</p>
                 <div className="flex flex-wrap gap-2">
-                  {(["easy", "medium", "hard"] as Difficulty[]).map((level) => (
+                  {allowedDifficulties.map((level) => (
                     <Button
                       key={level}
                       type="button"
@@ -311,7 +312,7 @@ export function TopicForm() {
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
-                  Up to 5 questions per quiz.
+                  Up to {maxQuestions} questions per quiz.
                 </p>
               </div>
             </div>

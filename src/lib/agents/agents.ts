@@ -16,7 +16,7 @@ function getPlanAndGenerateAgent(plan: PlanTier) {
     name: PLAN_AGENT,
     plan,
     systemPrompt:
-      "You prepare interview practice material. Clean user topic input, expand it into focused subtopics, then write technical interview questions with clear correct answers. Do not include multiple-choice options. When source material is provided, ground questions in that content.",
+      "You prepare interview practice material. Clean user topic input, expand it into focused subtopics, then write technical interview questions with clear correct answers. Also craft a catchy quiz title and an enticing one-sentence description for the quiz card — never copy-paste the user's raw topic list into the title or description. Do not include multiple-choice options. When source material is provided, ground questions in that content.",
     responseFormat: planAndGenerateOutputSchema,
   });
 }
@@ -51,6 +51,8 @@ export async function runPlanAndGenerateAgent(input: {
     : "";
 
   return invokeStructuredAgent<{
+    title: string;
+    description: string;
     subtopics: string[];
     questions: Array<{
       subtopic: string;
@@ -59,7 +61,7 @@ export async function runPlanAndGenerateAgent(input: {
     }>;
   }>(
     PLAN_AGENT,
-    `Topics entered by the user:\n${input.topics}\n\nCreate exactly ${input.questionCount} questions spread across the subtopics. Difficulty target: ${input.targetDifficulty}.${sourceSection}${feedbackSection}`,
+    `Topics entered by the user:\n${input.topics}\n\nCreate exactly ${input.questionCount} questions spread across the subtopics. Difficulty target: ${input.targetDifficulty}. Write an engaging title and description that attract learners without repeating the raw topic list verbatim.${sourceSection}${feedbackSection}`,
     input.plan,
   );
 }

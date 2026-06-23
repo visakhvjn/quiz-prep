@@ -26,15 +26,18 @@ type AttemptAnswer {
 }
 
 model Quiz {
-  id         String         @id @map("_id")
-  ownerId    String
-  topics     String
-  difficulty String
-  visibility String         @default("private")
-  questions  QuizQuestion[]
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
-  attempts   Attempt[]
+  id          String         @id @map("_id")
+  ownerId     String
+  topics      String
+  title       String         @default("")
+  description String         @default("")
+  subtopics   String[]
+  difficulty  String
+  visibility  String         @default("private")
+  questions   QuizQuestion[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  attempts    Attempt[]
 
   @@index([ownerId])
   @@index([visibility])

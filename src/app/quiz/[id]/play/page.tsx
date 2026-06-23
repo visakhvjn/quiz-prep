@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { apiFetch } from "@/lib/api-client";
-import { useQuiz } from "@/lib/use-quizzes-list";
+import { useQuiz, getQuizDisplayDescription, getQuizSubtopics, getQuizTitle } from "@/lib/use-quizzes-list";
 import type { AttemptAnswer } from "@/types/quiz";
 
 export default function QuizPlayPage() {
@@ -112,7 +112,22 @@ export default function QuizPlayPage() {
             <p className="text-xs font-medium tracking-wide text-primary uppercase">
               Ready to practice
             </p>
-            <h1 className="text-3xl font-bold tracking-tight">{quiz.topics}</h1>
+            <h1 className="text-3xl font-bold tracking-tight">{getQuizTitle(quiz)}</h1>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {getQuizDisplayDescription(quiz)}
+            </p>
+            {getQuizSubtopics(quiz).length > 0 ? (
+              <div className="flex flex-wrap justify-center gap-1.5 pt-1">
+                {getQuizSubtopics(quiz).map((subtopic) => (
+                  <span
+                    key={subtopic}
+                    className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
+                  >
+                    {subtopic}
+                  </span>
+                ))}
+              </div>
+            ) : null}
             <p className="text-sm text-muted-foreground capitalize">
               {quiz.difficulty} difficulty
             </p>
@@ -181,18 +196,14 @@ export default function QuizPlayPage() {
 
   if (isFinished) {
     return (
-      <main className="app-gradient flex flex-1 items-center justify-center px-4 py-10">
-        <div className="w-full max-w-lg space-y-4">
-          <QuizProgress score={score} total={quiz.questions.length} />
-          {isSavingAttempt ? (
-            <p className="text-center text-sm text-muted-foreground">
-              Saving your attempt…
-            </p>
-          ) : null}
-          <div className="flex justify-center">
-            <Link href="/" className={buttonVariants({ variant: "outline" })}>
-              Back to home
-            </Link>
+      <main className="flex h-full min-h-0 flex-1 flex-col overflow-y-auto">
+        <div className="flex flex-1 flex-col items-center justify-center px-0 py-6 sm:px-4 sm:py-10">
+          <div className="w-full sm:max-w-md">
+            <QuizProgress
+              score={score}
+              total={quiz.questions.length}
+              isSaving={isSavingAttempt}
+            />
           </div>
         </div>
       </main>
@@ -242,7 +253,7 @@ export default function QuizPlayPage() {
           Practice session
         </p>
         <p className="text-sm text-muted-foreground">
-          {quiz.topics} · {quiz.difficulty} · {quiz.questions.length} questions
+          {getQuizTitle(quiz)} · {quiz.difficulty} · {quiz.questions.length} questions
         </p>
       </div>
 

@@ -7,7 +7,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   formatQuizDate,
-  getQuizChatTitle,
+  getQuizTitle,
   useQuizzesList,
 } from "@/lib/use-quizzes-list";
 
@@ -110,7 +110,7 @@ export function AppSidebar({
                     )}
                   >
                     <p className="truncate text-sm font-medium">
-                      {getQuizChatTitle(quiz.topics)}
+                      {getQuizTitle(quiz)}
                     </p>
                     <p
                       className={cn(

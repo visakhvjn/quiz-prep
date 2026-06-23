@@ -10,7 +10,7 @@ export function createChatModel(plan: PlanTier = "hobby") {
   const model =
     plan === "premium"
       ? (process.env.PREMIUM_OPENAI_MODEL ?? "gpt-4o")
-      : (process.env.OPENAI_MODEL ?? "gpt-4o-mini");
+      : (process.env.OPENAI_MODEL ?? "gpt-4.1-nano");
 
   return new ChatOpenAI({
     apiKey,

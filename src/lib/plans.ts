@@ -1,12 +1,15 @@
+import type { Difficulty } from "@/types/quiz";
+
 export type PlanTier = "hobby" | "premium";
 
 export const PLAN_LIMITS = {
   hobby: {
-    maxQuestions: 5,
+    maxQuestions: 10,
     minQuestions: 3,
     documentUpload: false,
-    modelLabel: "Standard AI models",
+    modelLabel: "Efficient AI models",
     description: "Great for quick practice sessions",
+    allowedDifficulties: ["easy", "medium"] as const,
   },
   premium: {
     maxQuestions: 5,
@@ -14,6 +17,7 @@ export const PLAN_LIMITS = {
     documentUpload: true,
     modelLabel: "Advanced AI models",
     description: "For power users and educators",
+    allowedDifficulties: ["easy", "medium", "hard"] as const,
   },
 } as const;
 
@@ -32,6 +36,12 @@ export function getQuestionCountRange(plan: PlanTier) {
 export function clampQuestionCount(plan: PlanTier, count: number) {
   const limits = PLAN_LIMITS[plan];
   return Math.min(Math.max(count, limits.minQuestions), limits.maxQuestions);
+}
+
+export function isDifficultyAllowed(plan: PlanTier, difficulty: Difficulty) {
+  return (PLAN_LIMITS[plan].allowedDifficulties as readonly Difficulty[]).includes(
+    difficulty,
+  );
 }
 
 export function getPremiumOwnerIds(): Set<string> {

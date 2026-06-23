@@ -3,8 +3,21 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Layers } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { apiFetch } from "@/lib/api-client";
-import { formatQuizDate, getQuizChatTitle } from "@/lib/use-quizzes-list";
+import {
+  formatQuizDate,
+  getQuizDisplayDescription,
+  getQuizSubtopics,
+  getQuizTitle,
+} from "@/lib/use-quizzes-list";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Quiz } from "@/types/quiz";
@@ -55,11 +68,11 @@ export function PublicQuizzesSection() {
         </div>
 
         {isLoading ? (
-          <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
             {[1, 2, 3].map((item) => (
               <div
                 key={item}
-                className="h-20 animate-pulse rounded-2xl bg-primary/5"
+                className="h-44 animate-pulse rounded-2xl bg-primary/5"
               />
             ))}
           </div>
@@ -75,33 +88,65 @@ export function PublicQuizzesSection() {
             </Link>
           </div>
         ) : (
-          <ul className="space-y-3">
-            {quizzes.map((quiz, index) => (
-              <li key={quiz.id}>
-                <Link
-                  href={`/quiz/${quiz.id}/play`}
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
+            {quizzes.map((quiz) => {
+              const subtopics = getQuizSubtopics(quiz);
+              const visibleSubtopics = subtopics.slice(0, 5);
+              const hiddenCount = subtopics.length - visibleSubtopics.length;
+
+              return (
+              <Link
+                key={quiz.id}
+                href={`/quiz/${quiz.id}/play`}
+                className="group block h-full"
+              >
+                <Card
                   className={cn(
-                    "group flex items-center gap-4 rounded-2xl border border-primary/10 bg-white px-5 py-4 shadow-sm transition-all",
+                    "h-full border-primary/10 bg-white shadow-sm transition-all",
                     "hover:border-primary/25 hover:shadow-md hover:shadow-primary/8",
                   )}
                 >
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-sm font-bold text-primary">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-semibold group-hover:text-primary">
-                      {getQuizChatTitle(quiz.topics)}
+                  <CardHeader className="pb-2">
+                    <CardTitle className="line-clamp-2 text-lg font-semibold group-hover:text-primary">
+                      {getQuizTitle(quiz)}
+                    </CardTitle>
+                    <CardDescription className="line-clamp-3 text-sm leading-relaxed">
+                      {getQuizDisplayDescription(quiz)}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-3 pt-0">
+                    {subtopics.length > 0 ? (
+                      <div className="hidden flex-wrap gap-1.5 sm:flex">
+                        {visibleSubtopics.map((subtopic) => (
+                          <span
+                            key={subtopic}
+                            className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
+                          >
+                            {subtopic}
+                          </span>
+                        ))}
+                        {hiddenCount > 0 ? (
+                          <span className="self-center text-xs text-muted-foreground">
+                            +{hiddenCount} more
+                          </span>
+                        ) : null}
+                      </div>
+                    ) : null}
+                    <p className="text-xs font-medium tracking-wide text-primary uppercase">
+                      {quiz.difficulty}
                     </p>
-                    <p className="mt-0.5 text-sm text-muted-foreground">
-                      {quiz.questions.length} questions · {quiz.difficulty} ·{" "}
-                      {formatQuizDate(quiz.createdAt)}
-                    </p>
-                  </div>
-                  <ArrowUpRight className="size-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary" />
-                </Link>
-              </li>
-            ))}
-          </ul>
+                  </CardContent>
+                  <CardFooter className="mt-auto justify-between border-t border-primary/8 bg-primary/[0.03] text-xs text-muted-foreground">
+                    <span>
+                      {quiz.questions.length} questions · {formatQuizDate(quiz.createdAt)}
+                    </span>
+                    <ArrowUpRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary" />
+                  </CardFooter>
+                </Card>
+              </Link>
+            );
+            })}
+          </div>
         )}
       </div>
     </section>
